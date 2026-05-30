@@ -25,6 +25,7 @@ async function init() {
     console.error(err);
   }
   // Add each recipe to the <main> element
+  console.log(recipes, Array.isArray(recipes));
   addRecipesToDocument(recipes);
 }
 
@@ -45,6 +46,23 @@ function initializeServiceWorker() {
   // We first must register our ServiceWorker here before any of the code in
   // sw.js is executed.
   // B1. TODO - Check if 'serviceWorker' is supported in the current browser
+  if ('serviceWorker' in navigator) {
+    console.log("Service workers supported");
+  }else{
+    console.log("NO SERVICE WORKERS");
+  }
+
+  window.addEventListener('load', function(buddyServiceWorker) {
+    //I ripped this from the docs site
+    this.navigator.serviceWorker.register('./sw.js').then(
+      (registration) => {
+        console.log("Service worker successfully registrated:", registration);
+      },
+      (error) => {
+        console.error(`Service worker registration failed: ${error}`);
+      },
+    );
+  });
   // B2. TODO - Listen for the 'load' event on the window object.
   // Steps B3-B6 will be *inside* the event listener's function created in B2
   // B3. TODO - Register './sw.js' as a service worker (The MDN article
@@ -71,6 +89,34 @@ async function getRecipes() {
   /**************************/
   // The rest of this method will be concerned with requesting the recipes
   // from the network
+  const stored = localStorage.getItem('recipes');
+  if(stored){
+    //alert("Got a recipe por unos taquitos wey");
+    return JSON.parse(stored);
+  }
+
+  //alert("Ay ay ay no tengo recipes por mis takis no mame wey");
+  const recipes = [];
+
+  return new Promise(async (resolve, reject) => {
+    const recipeLen = RECIPE_URLS.length;
+    for(let i = 0; i < recipeLen; i++){
+      try{
+        const response = await fetch(RECIPE_URLS[i]);
+        const recipe = await response.json();
+        recipes.push(recipe);
+
+        if(recipes.length === recipeLen)
+        {
+          saveRecipesToStorage(recipes);
+          resolve(recipes);
+        }
+      }catch (error){
+        console.error(error);
+        reject(error);
+      }
+    }
+  });
   // A2. TODO - Create an empty array to hold the recipes that you will fetch
   // A3. TODO - Return a new Promise. If you are unfamiliar with promises, MDN
   //            has a great article on them. A promise takes one parameter - A
