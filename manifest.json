@@ -2,7 +2,7 @@
     "name": "Lab8_Starter",
     "short_name": "Joshua Robles",
     "description": "Recipes por mis taquitos o algo wey",
-    "start_url": "http://127.0.0.1:5501/",
+    "start_url": "https://j4robles.github.io/Lab8_Starter/",
     "display": "minimal-ui",
     "background_color": "#66ff00",
     "theme_color": "#ff69b4",
