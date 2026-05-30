@@ -25,7 +25,6 @@ async function init() {
     console.error(err);
   }
   // Add each recipe to the <main> element
-  console.log(recipes, Array.isArray(recipes));
   addRecipesToDocument(recipes);
 }
 
